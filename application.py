@@ -14,6 +14,14 @@ class _Application(object):
         self.ini = None
         self.resman = None
         self.trans = Translator()
+        
+        # Test
+        self.isexe = hasattr(sys,"frozen") # True if compiled with py2exe
+        self.argv = sys.argv[1:] # Command line arguments list
+        
+        app_path = sys.executable if self.isexe else sys.argv[0]
+        app_path = os.path.abspath(app_path)
+        self.appdir = os.path.dirname(app_path) # directory of caller script or exe
     
     #-------------------------------------------------------------------------------------
     # Public methods
@@ -22,30 +30,6 @@ class _Application(object):
         """Return mypath joined with appdir"""
         p = os.path.join(self.appdir, mypath)
         return os.path.abspath(p)
-    
-    #-------------------------------------------------------------------------------------
-    # Properties methods
-    
-    def _get_isexe(self):
-        # Return true if compiled with py2exe
-        return hasattr(sys,"frozen")
-    
-    def _get_appdir(self):
-        # Return directory of caller script or exe
-        app_path = sys.executable if self.isexe else sys.argv[0]
-        app_path = os.path.abspath(app_path)
-        return os.path.dirname(app_path)
-    
-    def _get_argv(self):
-        # Return list with command line arguments
-        return sys.argv[1:]
-    
-    #-------------------------------------------------------------------------------------
-    # Properties
-    
-    isexe  = property(_get_isexe)
-    appdir = property(_get_appdir)
-    argv   = property(_get_argv)
 
 #-----------------------------------------------------------------------------------------
 
