@@ -15,7 +15,6 @@ class _Application(object):
         self.resman = None
         self.trans = Translator()
         
-        # Test
         self.isexe = hasattr(sys,"frozen") # True if compiled with py2exe
         self.argv = sys.argv[1:] # Command line arguments list
         
