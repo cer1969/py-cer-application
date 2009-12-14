@@ -52,7 +52,7 @@ class Translator(dict):
         lcats = [os.path.splitext(x)[0] for x in lcats]
         sal = []
         for i in lcats:
-            name, cat = self._getCatalog(i)
+            name, _cat = self._getCatalog(i)
             sal.append((i, name))
         return sal
     
