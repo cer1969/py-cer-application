@@ -22,8 +22,7 @@ class AppIni(RawConfigParser):
     #-------------------------------------------------------------------------------------
     # Public method for options definition
     
-    def addSection(self, section):
-        RawConfigParser.add_section(self, section)
+    addSection = RawConfigParser.add_section    # method rename
     
     def addOption(self, sectop, default, validator=None):
         self._cer_validators[sectop] = cval.TextValidator() if validator is None else validator
