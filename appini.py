@@ -12,53 +12,56 @@ __all__ = ['AppIni']
 #-----------------------------------------------------------------------------------------
 
 class AppIni(RawConfigParser):
-
+    
     def __init__(self, filepath):
         RawConfigParser.__init__(self)
         self.filepath = filepath
         self._cer_validators = {}
         self._cer_defaults = {}
-
+    
     #-------------------------------------------------------------------------------------
     # Public method for options definition
     
-    def add_option(self, sectop, default, validator=cval.CerTextValidator()):
-        self._cer_validators[sectop] = validator
+    def addSection(self, section):
+        RawConfigParser.add_section(self, section)
+    
+    def addOption(self, sectop, default, validator=None):
+        self._cer_validators[sectop] = cval.TextValidator() if validator is None else validator
         self._cer_defaults[sectop] = default
         self.set(sectop, default)
     
-    def add_text(self, sectop, default="", format="%s"):
-        val = cval.CerTextValidator(format)
-        self.add_option(sectop, default, val)
+    def addText(self, sectop, default="", format="%s"):
+        val = cval.TextValidator(format)
+        self.addOption(sectop, default, val)
     
-    def add_int(self, sectop, default=0, format="%d", vmin=None, vmax=None):
-        val = cval.CerIntValidator(format, vmin, vmax)
-        self.add_option(sectop, default, val)
-
-    def add_float(self, sectop, default=0.0, format="%.2f", vmin=None, 
+    def addInt(self, sectop, default=0, format="%d", vmin=None, vmax=None):
+        val = cval.IntValidator(format, vmin, vmax)
+        self.addOption(sectop, default, val)
+    
+    def addFloat(self, sectop, default=0.0, format="%.2f", vmin=None, 
                   vmax=None):
-        val = cval.CerFloatValidator(format, vmin, vmax)
-        self.add_option(sectop, default, val)
+        val = cval.FloatValidator(format, vmin, vmax)
+        self.addOption(sectop, default, val)
     
-    def add_time(self, sectop, default=datetime.now().time(),
-                 format="%H:%M", vmin=None, vmax=None):
-        val = cval.CerTimeValidator(format, vmin, vmax)
-        self.add_option(sectop, default, val)
+    def addTime(self, sectop, default=None, format="%H:%M", vmin=None, vmax=None):
+        val = cval.TimeValidator(format, vmin, vmax)
+        dfv = datetime.now().time() if default is None else default
+        self.addOption(sectop, dfv, val)
     
-    def add_date(self, sectop, default=date.today(),
-                 format="%d/%m/%Y", vmin=None, vmax=None):
-        val = cval.CerDateValidator(format, vmin, vmax)
-        self.add_option(sectop, default, val)
+    def addDate(self, sectop, default=None, format="%d/%m/%Y", vmin=None, vmax=None):
+        val = cval.DateValidator(format, vmin, vmax)
+        dfv = date.today() if default is None else default
+        self.addOption(sectop, dfv, val)
     
-    def add_datetime(self, sectop, default=datetime.now(), 
-                     format="%d/%m/%Y %H:%M", vmin=None, vmax=None):
-        val = cval.CerDateTimeValidator(format, vmin, vmax)
-        self.add_option(sectop, default, val)
-
+    def addDateTime(self, sectop, default=None, format="%d/%m/%Y %H:%M", vmin=None, vmax=None):
+        val = cval.DateTimeValidator(format, vmin, vmax)
+        dfv = datetime.now() if default is None else default
+        self.addOption(sectop, dfv, val)
+    
     #-------------------------------------------------------------------------------------
     # Public method for setting and getting options values
     
-    def get_sectops(self):
+    def getOptions(self):
         sal = []
         for sect in self.sections():
             for op in self.options(sect):
@@ -69,17 +72,17 @@ class AppIni(RawConfigParser):
     def set(self, sectop, value):
         val = self._cer_validators[sectop]
         txt = val.getText(value)
-        if isinstance(val, cval.CerTextValidator):
+        if isinstance(val, cval.TextValidator):
             txt = txt.encode("latin-1")
         section, option = sectop.split(".")
         RawConfigParser.set(self, section, option, txt)
     
-    def get_raw(self, sectop):
+    def getRaw(self, sectop):
         # Si la validación falla lanza error
         val = self._cer_validators[sectop]
         section, option = sectop.split(".")
         text = RawConfigParser.get(self, section, option)
-        if isinstance(val, cval.CerTextValidator):
+        if isinstance(val, cval.TextValidator):
             data = val.getData(text.decode("latin-1"))
         else:
             data = val.getData(text)
@@ -88,12 +91,12 @@ class AppIni(RawConfigParser):
     def get(self, sectop):
         # Si la validación falla retorna default
         try:
-            return self.get_raw(sectop)
+            return self.getRaw(sectop)
         except ValueError:
             value = self._cer_defaults[sectop]
             self.set(sectop, value)
             return value
-
+    
     #-------------------------------------------------------------------------------------
     # Public method for load and save
     
