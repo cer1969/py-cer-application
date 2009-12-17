@@ -58,7 +58,7 @@ class Translator(dict):
     
     #-------------------------------------------------------------------------------------
     # Private methods
-
+    
     def _getCatalog(self, lang):
         langfile = os.path.join(self.folder, "%s.cat" % lang)
         mydict = {"name": None, "cat": {}}
