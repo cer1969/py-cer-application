@@ -7,7 +7,7 @@ import sys
 
 #-----------------------------------------------------------------------------------------
 
-__all__ = ["Distribution", "get_options", "make_exe"]
+__all__ = ["Distribution", "getOptions", "makeExe"]
 
 #-----------------------------------------------------------------------------------------
 
@@ -63,14 +63,14 @@ class Distribution(object):
 
 #-----------------------------------------------------------------------------------------
 
-def get_options(**kwa):
+def getOptions(**kwa):
     sal = {}
     sal['py2exe'] = kwa
     return sal
 
 #-----------------------------------------------------------------------------------------
 
-def make_exe(**kwa):
+def makeExe(**kwa):
     # Cuando se corre sin argumentos, incorporamos py2exe as argument
     sys.argv.append("py2exe")
     setup(**kwa)
