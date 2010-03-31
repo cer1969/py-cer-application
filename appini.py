@@ -3,7 +3,7 @@
 
 from datetime import datetime, date
 from ConfigParser import RawConfigParser
-import cer.utils.validators as cval 
+from cer.value import validator 
 
 #-----------------------------------------------------------------------------------------
 
@@ -24,38 +24,37 @@ class AppIni(RawConfigParser):
     
     addSection = RawConfigParser.add_section    # method rename
     
-    def addOption(self, sectop, default, validator=None):
-        self._cer_validators[sectop] = cval.TextValidator() if validator is None else validator
+    def addOption(self, sectop, default, valtor=None):
+        self._cer_validators[sectop] = validator.Text() if (valtor is None) else valtor
         self._cer_defaults[sectop] = default
         self.set(sectop, default)
     
     def addText(self, sectop, default="", format="%s"):
-        val = cval.TextValidator(format)
-        self.addOption(sectop, default, val)
+        valtor = validator.Text(format)
+        self.addOption(sectop, default, valtor)
     
     def addInt(self, sectop, default=0, format="%d", vmin=None, vmax=None):
-        val = cval.IntValidator(format, vmin, vmax)
-        self.addOption(sectop, default, val)
+        valtor = validator.Int(format, vmin, vmax)
+        self.addOption(sectop, default, valtor)
     
-    def addFloat(self, sectop, default=0.0, format="%.2f", vmin=None, 
-                  vmax=None):
-        val = cval.FloatValidator(format, vmin, vmax)
-        self.addOption(sectop, default, val)
+    def addFloat(self, sectop, default=0.0, format="%.2f", vmin=None, vmax=None):
+        valtor = validator.Float(format, vmin, vmax)
+        self.addOption(sectop, default, valtor)
     
     def addTime(self, sectop, default=None, format="%H:%M", vmin=None, vmax=None):
-        val = cval.TimeValidator(format, vmin, vmax)
+        valtor = validator.Time(format, vmin, vmax)
         dfv = datetime.now().time() if default is None else default
-        self.addOption(sectop, dfv, val)
+        self.addOption(sectop, dfv, valtor)
     
     def addDate(self, sectop, default=None, format="%d/%m/%Y", vmin=None, vmax=None):
-        val = cval.DateValidator(format, vmin, vmax)
+        valtor = validator.Date(format, vmin, vmax)
         dfv = date.today() if default is None else default
-        self.addOption(sectop, dfv, val)
+        self.addOption(sectop, dfv, valtor)
     
     def addDateTime(self, sectop, default=None, format="%d/%m/%Y %H:%M", vmin=None, vmax=None):
-        val = cval.DateTimeValidator(format, vmin, vmax)
+        valtor = validator.DateTime(format, vmin, vmax)
         dfv = datetime.now() if default is None else default
-        self.addOption(sectop, dfv, val)
+        self.addOption(sectop, dfv, valtor)
     
     #-------------------------------------------------------------------------------------
     # Public method for setting and getting options values
@@ -69,22 +68,22 @@ class AppIni(RawConfigParser):
         return sal
     
     def set(self, sectop, value):
-        val = self._cer_validators[sectop]
-        txt = val.getText(value)
-        if isinstance(val, cval.TextValidator):
+        valtor = self._cer_validators[sectop]
+        txt = valtor.getText(value)
+        if isinstance(valtor, validator.Text):
             txt = txt.encode("latin-1")
         section, option = sectop.split(".")
         RawConfigParser.set(self, section, option, txt)
     
     def getRaw(self, sectop):
         # Si la validación falla lanza error
-        val = self._cer_validators[sectop]
+        valtor = self._cer_validators[sectop]
         section, option = sectop.split(".")
         text = RawConfigParser.get(self, section, option)
-        if isinstance(val, cval.TextValidator):
-            data = val.getData(text.decode("latin-1"))
+        if isinstance(valtor, validator.Text):
+            data = valtor.getData(text.decode("latin-1"))
         else:
-            data = val.getData(text)
+            data = valtor.getData(text)
         return data
     
     def get(self, sectop):

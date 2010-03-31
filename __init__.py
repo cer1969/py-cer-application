@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # CRISTIAN ECHEVERRÍA RABÍ
 
-import application
-from appinfo import AppInfo
-from appini import AppIni
+from application import *
+from appini import *
+from translator import *
 
-version = __version__ = "0.2.0"
+version = __version__ = "0.3.0"
