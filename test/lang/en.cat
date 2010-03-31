@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+# Language catalog
+
+name = 'English'
+
+cat  = {
+    u'Derechos = %s': u'Copyright = %s',
+    u'Nombre = %s': u'Name = %s',
+    u'Versión = %s': u'Version = %s',
+    u'Compañía = %s': u'Company = %s',
+    u'Descripción = %s': u'Description = %s',
+    u'Nombre ejecutable = %s': u'Executable name = %s',
+    u'Nombre guión = %s': u'Script name = %s',
+    u'Ruta ícono = %s': u'Icon file path = %s'
+}
+
+new  = {
+}
