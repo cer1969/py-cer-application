@@ -2,7 +2,7 @@
 # CRISTIAN ECHEVERRÍA RABÍ 
 
 import glob
-from cer.application030.distribution import getOptions, makeExe
+from cer.application.distribution import getOptions, makeExe
 from config import app
 
 #-----------------------------------------------------------------------------------------
