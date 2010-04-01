@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 # CRISTIAN ECHEVERRÍA RABÍ 
 
-from cer.application030 import Application, AppIni, Translator
+from cer.application import Application, AppIni, Translator
 
 #-----------------------------------------------------------------------------------------
 
 name = "test"
 version = "0.1.0"
+copyright = u"Cristian Echeverría"
 
 #-----------------------------------------------------------------------------------------
 # Application
 
-app = Application(name, version, copyright=u"Cristian Echeverría")
+app = Application(name, version, copyright)
+app.register("cerapp")
 
 #-----------------------------------------------------------------------------------------
 # User options
@@ -25,6 +27,8 @@ ini.addSection("locale")
 ini.addText("locale.lang", "no_lang")
 ini.load(create=True)
 
+app.ini = ini
+
 #-----------------------------------------------------------------------------------------
 # Translation suport
 
@@ -32,8 +36,4 @@ trans = Translator()
 trans.folder = app.toAppDir("lang")
 trans.lang = ini.locale_lang
 
-#-----------------------------------------------------------------------------------------
-
-app.ini = ini
 app.trans = trans
-app.register("cerapp")
