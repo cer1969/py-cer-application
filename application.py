@@ -98,7 +98,7 @@ class Application(object):
         return os.path.abspath(p)
     
     def register(self, name):
-        """Register Application object as a globla name"""
+        """Register Application object as a global name"""
         __builtin__.__dict__[name] = self
     
     #-------------------------------------------------------------------------------------
