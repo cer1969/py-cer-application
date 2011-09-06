@@ -1,12 +1,25 @@
 # -*- coding: utf-8 -*-
 # CRISTIAN ECHEVERRÍA RABÍ
 
-import os, hmac, hashlib    #, getpass
-from cer.data import sqlite2
+import os, hmac, hashlib, sqlite3    #, getpass
 
 #-----------------------------------------------------------------------------------------
 
 __all__ = ["get_pre_code", "get_licence_code", "LicenceManager"]
+
+#-----------------------------------------------------------------------------------------
+
+class _Record(dict):
+    __slots__ = ()
+    def __getattr__(self, name):
+        return self[name]
+    def __setattr__(self, name, value):
+        self[name] = value
+
+def _record_factory(cursor, row):
+    names = [x[0] for x in cursor.description]
+    return _Record(zip(names, row))
+
 
 #-----------------------------------------------------------------------------------------
 
@@ -39,17 +52,23 @@ def get_licence_code(key, pre):
 class LicenceManager(object):
     
     def __init__(self, filename, key1, key2):
-        db = sqlite2.connect(filename)
+        db = sqlite3.connect(filename)
+        db.row_factory = _record_factory
         
-        if len(db.tablenames) == 0:
-            query = (
-                "create table lic (idx text primary key not null, name text, " 
-                "company text, email text, key text)"
+        cur = db.cursor()
+        cur.execute("select * from sqlite_master where name='lic'")
+        data = cur.fetchall()
+        
+        if len(data) == 0:
+            cur.execute("""create table lic (idx text primary key not null, name text, 
+                company text, email text, key text)"""
             )
-            db.alter(query)
-            db.refresh()
-            db["lic"].insertNew(idx=u"USER", name=u"", company=u"", email=u"", key=u"")
+            cur.execute("""insert into lic (idx, name, company, email, key) 
+                values (?, ?, ?, ?, ?)""", ["USER", u"", u"", u"", u""]
+            )
             db.commit()
+        
+        cur.close()
         
         self.db = db
         self.key1 = key1
@@ -61,7 +80,12 @@ class LicenceManager(object):
     def set_info(self, **kwa):
         info = self.info
         info.update(kwa)
-        self.db["lic"].update(info)
+        del info["idx"]
+        
+        _query = "update lic set %s where idx='USER'" % ", ".join(["%s=?" % x for x in info.keys()]) 
+        cur = self.db.cursor()
+        cur.execute(_query, info.values())
+        cur.close()
         self.db.commit()
     
     #-------------------------------------------------------------------------------------
@@ -78,14 +102,17 @@ class LicenceManager(object):
     licence_code = property(_get_licence_code)
     
     def _get_info(self):
-        return self.db["lic"][u"USER"]
+        cur = self.db.cursor()
+        cur.execute("select * from lic where idx='USER'")
+        info = cur.fetchone()
+        cur.close()
+        return info
     
     info = property(_get_info)
     
     def _get_check(self):
         info = self.info
         return self.licence_code == info.key
-        #return self.get_licence_code(self.get_pre_code(info.email)) == info.key
     
     check = property(_get_check)
     
