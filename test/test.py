@@ -23,5 +23,6 @@ print cerapp.appdir
 print cerapp.ini.filepath
 print cerapp.ini.getOptions()
 print cerapp.ini.app_name
+print cerapp.trans.getLangList()
 
 #cerapp.trans.save()
