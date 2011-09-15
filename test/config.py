@@ -35,5 +35,6 @@ app.ini = ini
 trans = Translator()
 trans.folder = app.toAppDir("lang")
 trans.lang = ini.locale_lang
+#trans.lang = "en"
 
 app.trans = trans
