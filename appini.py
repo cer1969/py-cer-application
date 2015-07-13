@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # CRISTIAN ECHEVERRÍA RABÍ
 
 from datetime import datetime, date
-from ConfigParser import RawConfigParser
+from configparser import RawConfigParser
 from cer.value import validator 
 
 #-----------------------------------------------------------------------------------------
@@ -113,7 +112,7 @@ class AppIni(RawConfigParser):
             f = open(self.filepath, "r")
             self.readfp(f)
             f.close()
-        except IOError, e:
+        except IOError as e:
             if create:
                 self.save()
             else:
