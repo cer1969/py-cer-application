@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # CRISTIAN ECHEVERRÍA RABÍ
 
-import __builtin__
+import builtins
 import sys, os
 
 #-----------------------------------------------------------------------------------------
@@ -99,7 +98,7 @@ class Application(object):
     
     def register(self, name):
         """Register Application object as a global name"""
-        __builtin__.__dict__[name] = self
+        builtins.__dict__[name] = self
     
     #-------------------------------------------------------------------------------------
     # Readonly properties

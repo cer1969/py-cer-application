@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # CRISTIAN ECHEVERRÍA RABÍ
 
 import os, hmac, hashlib, sqlite3    #, getpass
@@ -119,12 +118,12 @@ class LicenceManager(object):
     def _get_licence_text(self):
         if self.check:
             msg = (
-                   u" REGISTRO:\n"
-                   u" %s\n"
-                   u" %s\n"
+                   " REGISTRO:\n"
+                   " %s\n"
+                   " %s\n"
             ) % (self.info.name, self.info.company)
             return msg
-        return u" APLICACIÓN NO REGISTRADA"
+        return " APLICACIÓN NO REGISTRADA"
     
     licence_text = property(_get_licence_text)
     
@@ -132,13 +131,13 @@ class LicenceManager(object):
         if self.check:
             msg = "Registrado: %s - %s" % (self.info.name, self.info.company)
             return msg
-        return u"Aplicación no registrada"
+        return "Aplicación no registrada"
     
     licence_status = property(_get_licence_status)
     
     def _get_key_text(self):
         info = self.info
-        msg = u"_cercode_ Alloy - %s\n%s - %s\n%s" % (info.company, info.name, info.email, self.pre_code)
+        msg = "_cercode_ Alloy - %s\n%s - %s\n%s" % (info.company, info.name, info.email, self.pre_code)
         return msg
     
     key_text = property(_get_key_text)
