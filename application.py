@@ -148,9 +148,9 @@ class Application(object):
     
     def _setTrans(self, trans):
         self._trans = trans
-        if (trans is None) and ("_" in __builtin__.__dict__):
-            del __builtin__.__dict__["_"]
+        if (trans is None) and ("_" in builtins.__dict__):
+            del builtins.__dict__["_"]
         else:
-            __builtin__.__dict__["_"] = self._trans.translate
+            builtins.__dict__["_"] = self._trans.translate
     
     trans = property(_getTrans, _setTrans)

@@ -80,7 +80,8 @@ class AppIni(RawConfigParser):
         section, option = sectop.split(".")
         text = RawConfigParser.get(self, section, option)
         if isinstance(valtor, validator.Text):
-            data = valtor.getData(text.decode("latin-1"))
+            #data = valtor.getData(text.decode("latin-1"))
+            data = valtor.getData(text)
         else:
             data = valtor.getData(text)
         return data
