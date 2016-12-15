@@ -43,7 +43,7 @@ class Translator(dict):
             os.mkdir(self._folder)
         
         langfile = os.path.join(self.folder, "%s.cat" % self._lang)
-        f = open(langfile, "w")
+        f = open(langfile, "w", encoding="utf-8")
         f.write(self._getText())
         f.close()
     
@@ -66,14 +66,16 @@ class Translator(dict):
         langfile = os.path.join(self.folder, "%s.cat" % lang)
         mydict = {"name": None, "cat": {}}
         try:
-            execfile(langfile, {}, mydict)
+            #execfile(langfile, {}, mydict)
+            with open(langfile, "r", encoding="utf-8") as f:
+                code = compile(f.read(), langfile, 'exec')
+                exec(code, {}, mydict)
         except IOError:
             pass
         return mydict["name"], mydict["cat"]
     
     def _getText(self):
-        tpl = ("# -*- coding: utf-8 -*-\n"
-               "# Language catalog\n\n"
+        tpl = ("# Language catalog\n\n"
                "name = %s\n\n"
                "cat  = {\n%s\n}\n\n"
                "new  = {\n%s\n}"
@@ -81,12 +83,12 @@ class Translator(dict):
         
         tname = repr(self.name)
         
-        catitems = self.items()
+        catitems = list(self.items())
         catitems.sort()
         catkeys = ["    %s: %s" % (repr(key), repr(value)) for (key,value) in catitems]
         tcat  = ",\n".join(catkeys)
         
-        newitems = self._nocat.items()
+        newitems = list(self._nocat.items())
         newitems.sort()
         newkeys = ["    %s: %s" % (repr(key), repr(value)) for (key,value) in newitems]
         tnew = ",\n".join(newkeys)

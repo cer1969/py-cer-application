@@ -5,24 +5,25 @@ import config
 
 #-----------------------------------------------------------------------------------------
 
-print _(u"Nombre = %s") % cerapp.name
-print _(u"Versión = %s") % cerapp.version
-print _(u"Derechos = %s") % cerapp.copyright
+print( _("Nombre = %s") % cerapp.name )
+print( _("Versión = %s") % cerapp.version )
+print( _("Derechos = %s") % cerapp.copyright )
 
-print _(u"Compañía = %s") % cerapp.company_name
-print _(u"Descripción = %s") % cerapp.description
-print _(u"Ruta ícono = %s") % cerapp.iconpath
-print _(u"Nombre guión = %s") % cerapp.script
-print _(u"Nombre ejecutable = %s") % cerapp.dest_base 
+print( _("Compañía = %s") % cerapp.company_name )
+print( _("Descripción = %s") % cerapp.description )
+print( _("Ruta ícono = %s") % cerapp.iconpath )
+print( _("Nombre guión = %s") % cerapp.script )
+print( _("Nombre ejecutable = %s") % cerapp.dest_base ) 
 
-print cerapp.manifest
+print( cerapp.manifest )
 
-print cerapp.isexe
-print cerapp.argv
-print cerapp.appdir
-print cerapp.ini.filepath
-print cerapp.ini.getOptions()
-print cerapp.ini.app_name
-print cerapp.trans.getLangList()
-
+print( cerapp.isexe )
+print( cerapp.argv )
+print( cerapp.appdir )
+print( cerapp.ini.filepath )
+print( cerapp.ini.getOptions() )
+print( ">>>", cerapp.ini.app_name )
+print( cerapp.trans.getLangList() )
+print( cerapp.ini.app_name )
+print( "Niño Canción".encode().decode("Latin-1") )
 #cerapp.trans.save()
