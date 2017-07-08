@@ -36,13 +36,13 @@ def _get_serial():
 def get_pre_code(key, email):
     maker = hmac.new(key, digestmod=hashlib.sha1)
     #maker.update(self._get_user())
-    maker.update(_get_serial())
-    maker.update(email)
+    maker.update(_get_serial().encode("utf-8"))
+    maker.update(email.encode("utf-8"))
     return maker.hexdigest()
 
 def get_licence_code(key, pre):
     maker = hmac.new(key, digestmod=hashlib.sha1)
-    maker.update(pre)
+    maker.update(pre.encode("utf-8"))
     return maker.hexdigest()
 
 
@@ -63,7 +63,7 @@ class LicenceManager(object):
                 company text, email text, key text)"""
             )
             cur.execute("""insert into lic (idx, name, company, email, key) 
-                values (?, ?, ?, ?, ?)""", ["USER", u"", u"", u"", u""]
+                values (?, ?, ?, ?, ?)""", ["USER", u"", u"", u"", b""]
             )
             db.commit()
         
