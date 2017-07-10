@@ -1,23 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os
-from cer.application.licence import get_licence_code
+from cer.application.licence import get_licence_code, get_serial, get_pre_code
 
 #-----------------------------------------------------------------------------------------
 
-def get_my_serial():
-    drive = os.path.splitdrive("c:/")[0]
-    if os.path.exists("%s/" % drive):
-        x = os.popen("vol %s" % drive, "r").read()
-        return x.split()[-1]
-    return None
+pre1 = "fda6a89c5b2f63dc3a7fec8f4500595fa8f944c7"
+pre2 = "2bfd6abf7ec78f8335f19a0613c743b7f74bad12"
 
-
-pre = b"37419a64279105ef081094b904fc6214785893ec"
-key = b"cal1ps0"
-
-print (get_licence_code(key, pre))
-
-print (get_licence_code(key, b""))
-
-print (get_my_serial())
+print (get_pre_code("c:", "pre-cal1ps0", "crecheverria@colbun.cl"))
+print (get_serial("c:"))
+print ("--------------------------")
+print (get_licence_code("cal1ps0", pre1))
+print (get_licence_code("cal1ps0", pre2))

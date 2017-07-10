@@ -26,22 +26,23 @@ def _record_factory(cursor, row):
 #    # Por el momento no lo usamos para permitir instalación portable
 #    return getpass.getuser()
 
-def _get_serial():
-    drive = os.path.splitdrive(cerapp.appdir)[0]
+def get_serial(drive):
+    """Retorna número de serie del disco duro
+    """
     if os.path.exists("%s/" % drive):
         x = os.popen("vol %s" % drive, "r").read()
         return x.split()[-1]
     return None
 
-def get_pre_code(key, email):
-    maker = hmac.new(key, digestmod=hashlib.sha1)
+def get_pre_code(drive, key, email):
+    maker = hmac.new(key.encode("utf-8"), digestmod=hashlib.sha1)
     #maker.update(self._get_user())
-    maker.update(_get_serial().encode("utf-8"))
+    maker.update(get_serial(drive).encode("utf-8"))
     maker.update(email.encode("utf-8"))
     return maker.hexdigest()
 
 def get_licence_code(key, pre):
-    maker = hmac.new(key, digestmod=hashlib.sha1)
+    maker = hmac.new(key.encode("utf-8"), digestmod=hashlib.sha1)
     maker.update(pre.encode("utf-8"))
     return maker.hexdigest()
 
@@ -69,6 +70,7 @@ class LicenceManager(object):
         
         cur.close()
         
+        self.drive = os.path.splitdrive(filename)[0]
         self.db = db
         self.key1 = key1
         self.key2 = key2
@@ -79,43 +81,45 @@ class LicenceManager(object):
     def set_info(self, **kwa):
         info = self.info
         info.update(kwa)
-        del info["idx"]
         
-        _query = "update lic set %s where idx='USER'" % ", ".join(["%s=?" % x for x in info.keys()]) 
+        _query = "update lic set email=?, key=?, name=?, company=? where idx='USER'"
         cur = self.db.cursor()
-        cur.execute(_query, info.values())
+        cur.execute(_query, [info.email, info.key, info.name, info.company])
         cur.close()
         self.db.commit()
     
     #-------------------------------------------------------------------------------------
     
-    def _get_pre_code(self):
-        info = self.info
-        return get_pre_code(self.key1, info.email)
-    
-    pre_code = property(_get_pre_code)
-    
-    def _get_licence_code(self):
-        return get_licence_code(self.key2, self.pre_code)
-    
-    licence_code = property(_get_licence_code)
-    
-    def _get_info(self):
+    @property
+    def info(self):
+        """"Retorna datos almacenados de licencia
+        """
         cur = self.db.cursor()
         cur.execute("select * from lic where idx='USER'")
         info = cur.fetchone()
         cur.close()
         return info
+
+    @property
+    def pre_code(self):
+        """Retorna pre code construido con key1 y email
+        """
+        info = self.info
+        return get_pre_code(self.drive, self.key1, info.email)
     
-    info = property(_get_info)
+    @property
+    def licence_code(self):
+        """Retorna licence code usando key2 y pre_code
+        """
+        return get_licence_code(self.key2, self.pre_code)
     
-    def _get_check(self):
+    @property
+    def check(self):
         info = self.info
         return self.licence_code == info.key
     
-    check = property(_get_check)
-    
-    def _get_licence_text(self):
+    @property
+    def licence_text(self):
         if self.check:
             msg = (
                    " REGISTRO:\n"
@@ -125,20 +129,15 @@ class LicenceManager(object):
             return msg
         return " APLICACIÓN NO REGISTRADA"
     
-    licence_text = property(_get_licence_text)
-    
-    def _get_licence_status(self):
+    @property
+    def licence_status(self):
         if self.check:
             msg = "Registrado: %s - %s" % (self.info.name, self.info.company)
             return msg
         return "Aplicación no registrada"
     
-    licence_status = property(_get_licence_status)
-    
-    def _get_key_text(self):
+    @property
+    def key_text(self):
         info = self.info
         msg = "_cercode_ Alloy - %s\n%s - %s\n%s" % (info.company, info.name, info.email, self.pre_code)
         return msg
-    
-    key_text = property(_get_key_text)
-    
